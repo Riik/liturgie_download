@@ -1,0 +1,6 @@
+beautifulsoup4
+jupyter
+tqdm
+pandas
+openai
+openpyxl

@@ -1,0 +1,6 @@
+.ipynb_checkpoints
+.venv
+.~lock*
+*.xlsx
+data
+auth_cookie.txt
