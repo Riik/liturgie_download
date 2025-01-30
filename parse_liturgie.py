@@ -36,6 +36,10 @@ def parse_liederen(liturgie: str) -> List[str]:
 
 # Patterns:
 # Indent/Niets + Lied/Slotlied/Zegenlied/Zingen + Niets/:/.
+
+# Lied types:
+# Note: Kan ook de titel van een opwekking of lied zijn zonder iets erbij
+# Opw PvN Sela Psalm Ps LB NLB DNP Svg Schrijvers voor gerechtigheid
 def parse_lied(lied: str) -> str:
     if "lied" in lied.lower() or "zingen" in lied.lower():
         if ":" in lied:
@@ -54,6 +58,16 @@ def test_parse_lied():
     # Moet leeg zijn
     assert(parse_liederen("De kerkdienst wordt gehouden in de Immanuelkerk en wordt ook uitgezonden via Youtube\nKlik \nhier\n om de dienst van deze week te bekijken") 
            == [])
+    
+    # Liederen van meerdere regels :(
+    assert(parse_liederen("Slotlied: \nDe kerk van alle tijden \n(LEV)") 
+           == ["De kerk van alle tijden (LEV)"])
+    assert(parse_liederen("Lied: \nZegen voor de kinderen\n - Sela") 
+           == ["Zegen voor de kinderen - Sela"])
+    
+    # Lied met nog een nummer erbij
+    assert(parse_liederen("Lied 1: \nJoy to the world\nLied 2: \nKomt allen tezamen") 
+           == ["Joy to the world", "Komt allen tezamen"])
 
 def main():
     diensten = read_in_diensten(file_name="zangdiensten_2023_2024.csv")
