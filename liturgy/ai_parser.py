@@ -1,4 +1,4 @@
-
+# This is still a WIP, needs some refactoring. 
 
 client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
