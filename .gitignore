@@ -4,3 +4,6 @@
 *.xlsx
 data
 auth_cookie.txt
+
+.vscode
+__pycache__
