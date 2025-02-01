@@ -2,7 +2,6 @@
 .venv
 .~lock*
 *.xlsx
-*.csv
 data
 auth_cookie.txt
 
