@@ -1,8 +1,15 @@
-# This is still a WIP, needs some refactoring. 
+import json
+from tqdm import tqdm
+from openai import OpenAI
+
 
 client = OpenAI(
-    api_key=os.environ.get("OPENAI_API_KEY"),
+    base_url='http://localhost:11434/v1/',
+
+    # required but ignored
+    api_key='ollama',
 )
+
 
 system_prompt = """
 De gebruiker deelt een beschrijving van een kerkdienst. Vind die liederen, psalmen en gezangen in de Liturgie als een lijst. 
@@ -84,7 +91,7 @@ Psalm 118:1,2,6,7 (DNP)
 NLB 675:1
 """
 
-def extract_songs_from_liturgy(text):
+def extract_songs_from_liturgy(text, model):
     chat_completion = client.chat.completions.create(
         messages=[
             {"role": "system", "content": system_prompt},
@@ -94,21 +101,15 @@ def extract_songs_from_liturgy(text):
             {"role": "assistant", "content": example_response_2},
             {"role": "user", "content": text},
         ],
-        model="gpt-3.5-turbo",
+        model=model,
     )
     return chat_completion.choices[0].message.content
 
-if RERUN_OPENAI:
+
+def query_ai(df, model = "llama3.1:8b-instruct-q4_K_S"):
     responses = {}
-    for index, row in tqdm(df.iterrows()):
-        responses[row.file] = extract_songs_from_liturgy(row.content)
+    for _, row in tqdm(df.iterrows()):
+        responses[row.file] = extract_songs_from_liturgy(row.liturgy, model)
 
-    with open("api_responses.json", 'w') as o:
+    with open("./data/raw/api_responses.json", 'w') as o:
         o.write(json.dumps(responses))
-
-with open("api_responses.json", 'r') as f:
-    responses = json.loads(f.read())
-
-
-ai_summaries = pd.DataFrame([(key, value) for key, value in responses.items()], columns=["file", "songs_ai"])
-combined = ai_summaries.merge(df)
