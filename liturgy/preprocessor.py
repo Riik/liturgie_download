@@ -10,7 +10,7 @@ def get_content(soup):
     cleaned_text = '\n'.join(line for line in text.split('\n') if line.strip())
     return cleaned_text
 
-def get_date(soup):
+def get_datetime(soup):
     month_map = {
         "januari": 1,
         "februari": 2,
@@ -29,7 +29,8 @@ def get_date(soup):
     match = re.match(r"(.*) ([\d\:]+) tot .*", date_line)
     if match:
         day, mth, year = match[1].split()
-        return datetime.date(int(year), month_map[mth], int(day))
+        hr, min = match[2].split(':')
+        return datetime.datetime(int(year), month_map[mth], int(day), int(hr), int(min))
     return date_line
 
 def filter_content(content: str) -> str:
@@ -64,12 +65,12 @@ def preprocess():
         with open(file, 'r', encoding="utf-8") as f:
             data = f.read()
         soup = BeautifulSoup(data, 'html.parser')
-        date = get_date(soup)
+        date_time = get_datetime(soup)
         content = get_content(soup)
         liturgy = filter_content(content)
         
         parsed.append({
-            "date": date.strftime("%Y-%m-%d"), 
+            "date": date_time.strftime("%Y-%m-%d %H:%M"), 
             "liturgy": liturgy, 
             "file": file, 
             "full_content": content,
