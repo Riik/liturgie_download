@@ -94,7 +94,7 @@ def read_in_diensten(file_name):
     with open(file_name, 'r') as f:
         data = json.load(f)
     diensten = []
-    for l in data["services"] :
+    for l in data:
         diensten.append(Dienst(l["liturgy"], l["date"]))
         
     return diensten
